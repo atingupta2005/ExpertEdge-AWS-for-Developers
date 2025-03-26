@@ -48,16 +48,7 @@ Amazon Web Services (AWS) provides a comprehensive and widely adopted cloud plat
 - Visit the [AWS website](https://aws.amazon.com/), and sign up for an account.
 - You’ll need a credit card, but AWS offers a free tier to get started without incurring costs immediately.
 
-**Step 2: Installing AWS CLI**
-- The AWS Command Line Interface (CLI) allows you to interact with AWS services from the command line.
-  - Install AWS CLI via this link: [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
-  - After installation, configure the CLI using the command:
-    ```bash
-    aws configure
-    ```
-  - This will prompt you to enter your access key, secret key, region, and output format.
-
-**Step 3: Exploring the AWS Management Console**
+**Step 2: Exploring the AWS Management Console**
 - The AWS Management Console is the web interface that allows you to interact with all AWS services.
 - As a developer, you’ll primarily use the console to launch services like EC2, Lambda, and RDS.
 
@@ -70,20 +61,19 @@ In this webinar, we’ll focus on demonstrating how to deploy applications using
 #### **Demonstration 1: Deploying a Web Application on EC2**
 - Launch an EC2 instance.
   - Choose an instance type and configure the instance with an appropriate security group.
-  - SSH into the instance and install necessary software (e.g., Apache, Nginx).
-  - Deploy a simple web application (e.g., a static HTML page or a dynamic application using Node.js, Python, etc.).
+  - SSH into the instance and install necessary software
+  - Deploy a simple web application
   
 #### **Demonstration 2: Serverless Application with AWS Lambda**
 - Create a Lambda function.
-  - Choose a runtime (e.g., Python or Node.js).
+  - Choose a runtime (e.g., Python).
   - Write and test a simple function (e.g., returning a message).
-  - Set up triggers for the function (e.g., API Gateway or S3 events).
+  - Set up triggers for the function
   
 #### **Demonstration 3: Managing Databases with Amazon RDS**
 - Set up an RDS instance.
-  - Choose a database engine (e.g., MySQL or PostgreSQL).
-  - Configure the instance settings (e.g., instance class, storage).
-  - Connect to the RDS database using a client (e.g., MySQL Workbench, pgAdmin).
+  - Choose a database engine (e.g., MySQL).
+  - Connect to the RDS database using a client
 
 ---
 
