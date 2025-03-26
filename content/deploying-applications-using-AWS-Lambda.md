@@ -17,9 +17,8 @@
 **Step 2: Create a New Lambda Function**
 - Click **Create function**.
 - Choose **Author from scratch**.
-- Enter a **Function name** (e.g., `helloWorldFunction`).
+- Enter a **Function name** (e.g., `webinar-api`).
 - Choose **Python 3.x** for the runtime.
-- For **Role**, select **Create a new role with basic Lambda permissions**. This allows the Lambda function to be triggered by basic events, like direct invocations or CloudWatch logs.
 
 **Step 3: Create the Function**
 - Click **Create function** to proceed. This will create your Lambda function.
@@ -30,58 +29,100 @@
 
 **Step 1: Edit the Lambda Function Code**
 - After the function is created, scroll down to the **Function code** section.
-- You’ll see an editor with some default code. Replace the code with the following simple "Hello World" function:
+- You’ll see an editor with some default code. Replace the code with the following simple "webinar-api" function:
 
 ```python
 import json
 
 def lambda_handler(event, context):
-    # Simple Hello World Response
-    return {
-        'statusCode': 200,
-        'body': json.dumps('Hello, World!')
-    }
-```
+    # Extract API endpoint from the event
+    path = event.get('path', '')
 
-**Explanation:**
-- `lambda_handler` is the main function AWS Lambda uses to execute your code.
-- The function simply returns a JSON response with a **Hello, World!** message.
+    if path == '/register':
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'message': 'Click below to register for the webinar',
+                'registration_link': 'https://zoom.us/webinar/register/7317411552853/WN_zVywNSChQJeXfxYmpb8QUg'
+            })
+        }
+
+    elif path == '/youtube':
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'message': 'Watch the webinar live on YouTube',
+                'youtube_link': 'https://www.youtube.com/watch?v=N50HDBRjrAE'
+            })
+        }
+
+    elif path == '/linkedin':
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'message': 'Join the webinar event on LinkedIn',
+                'linkedin_link': 'https://www.linkedin.com/events/7309835931727892480/comments/'
+            })
+        }
+
+    elif path == '/webinar-details':
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'title': 'Getting Started with AWS for Developers: Deploying Applications with EC2, Lambda, and RDS',
+                'date': 'March 26th',
+                'time': '11:30 AM – 01:00 PM',
+                'description': 'This webinar will walk you through the steps of deploying applications on AWS using EC2, Lambda, and RDS.'
+            })
+        }
+
+    else:
+        return {
+            'statusCode': 404,
+            'body': json.dumps({
+                'message': 'API endpoint not found.'
+            })
+        }
+```
 
 **Step 2: Save the Code**
 - After entering the code, click the **Deploy** button to save and deploy the function.
 
 ---
 
-### **4. Test the Lambda Function**
+### **Deploy API Gateway**
 
-**Step 1: Create a Test Event**
-- Scroll to the **Test** section at the top of the Lambda function page.
-- Click **Test** to create a new test event.
-- Choose **Hello World** as the event template (it provides a simple structure).
-- You can leave the default event data as it is (or modify it if you want).
+#### 1. **Create a New API in API Gateway**:
+   - **Navigate to API Gateway** in the AWS Management Console.
+   - Select **Create API** → **REST API** → **Build**.
+   - **API Name**: `webinar-api`.
+   - **Endpoint Type**: **Regional**.
+   - Click **Create API**.
 
-**Step 2: Invoke the Function**
-- Click **Test** to invoke the Lambda function.
-- The function will execute, and you’ll see the result in the **Execution results** section.
-- You should see the response:
-  ```json
-  {
-      "statusCode": 200,
-      "body": "\"Hello, World!\""
-  }
-  ```
+#### 2. **Create Resources and Methods**:
+   - **Add Resource**:
+     - Go to **Resources** → **Create Resource**.
+     - **Resource Name**: `register` (or any other endpoint like `/youtube`).
+     - Click **Create Resource**.
+   
+   - **Add Method** (e.g., GET for `/register`):
+     - Select the resource (e.g., `/register`) → **Actions** → **Create Method** → **GET**.
+     - **Integration Type**: **Lambda Function** → Choose your Lambda function.
+     - Click **Save**.
+
+#### 3. **Deploy the API**:
+   - Go to **Actions** → **Deploy API**.
+   - **Deployment Stage**: Select or create a stage (e.g., `prod`).
+   - Click **Deploy**.
+   - The **Invoke URL** will be provided (e.g., `https://xyz12345.execute-api.us-west-2.amazonaws.com/prod`).
+
+#### 4. **Replicate for Other APIs**:
+   - To add additional resources (e.g., `/youtube`), repeat **Step 2** for each new endpoint.
+   - Each resource should have a method (e.g., GET) linked to the Lambda function.
+
+#### 5. **Test the API**:
+   - **Postman or Browser**: Test endpoints like:
+     - `https://xyz12345.execute-api.us-west-2.amazonaws.com/prod/register`
+     - `https://xyz12345.execute-api.us-west-2.amazonaws.com/prod/youtube`
 
 ---
-
-### **5. Monitoring the Lambda Function**
-
-**Step 1: View Logs in CloudWatch**
-- AWS Lambda automatically integrates with CloudWatch for logging.
-- In the **Monitoring** section of the Lambda function page, click **View logs in CloudWatch**.
-- This will take you to the CloudWatch Logs section, where you can see the execution logs for your Lambda function.
-
-**Step 2: Check CloudWatch Metrics**
-- You can also monitor Lambda performance and invocations through CloudWatch metrics. These metrics can help you track things like the number of invocations and duration of function execution.
-
----
-
