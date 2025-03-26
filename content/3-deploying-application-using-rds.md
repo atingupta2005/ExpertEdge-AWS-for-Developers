@@ -5,12 +5,6 @@ In this guide, we will walk you through the steps to create a simple CRUD (Creat
 
 You will use Postman to test the API endpoints after deploying your Lambda functions.
 
-#### **Prerequisites:**
-1. **AWS Account**: Ensure you have access to an AWS account.
-2. **AWS CLI**: Ensure you have AWS CLI installed and configured.
-3. **Postman**: Install Postman for API testing.
-4. **Flask**: Install Flask in your local environment for local testing before deploying it to Lambda.
-
 ---
 
 ### **Steps:**
@@ -27,151 +21,72 @@ You will use Postman to test the API endpoints after deploying your Lambda funct
    - Create a new database and a table for the application. Here's an example for creating a `users` table:
 
    ```sql
-   CREATE DATABASE flask_app;
    USE flask_app;
+   ```
 
+   ```sql
    CREATE TABLE users (
-       id INT AUTO_INCREMENT PRIMARY KEY,
-       name VARCHAR(100) NOT NULL,
-       email VARCHAR(100) NOT NULL,
-       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      email VARCHAR(100) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    );
    ```
 
 ---
 
-#### **Step 2: Set Up AWS Lambda**
-1. **Create a Lambda Function:**
-   - Navigate to **AWS Lambda** in the AWS console and create a new function.
-   - Choose **Author from scratch** and select Python 3.x as the runtime.
-   - Set the execution role with **AWS Lambda Basic Execution Role** for logging purposes.
+### Steps to deploy Python CRUD App:
 
-2. **Lambda Function to Connect to RDS:**
-   We'll write Lambda functions to handle CRUD operations. Each Lambda function will use the `pymysql` library (for MySQL) or `psycopg2` (for PostgreSQL) to interact with the RDS instance.
+#### 1. **Set up the virtual environment**:
 
-   Install the required libraries in your local environment:
+Create a Python virtual environment and install required libraries.
 
+1. **Create a project folder**:
    ```bash
-   pip install pymysql requests
+   cd ~
+   git clone https://github.com/atingupta2005/aws-rds-python-flask-crud
+   cd aws-rds-python-flask-crud
    ```
 
-3. **Lambda Function Code for CRUD Operations:**
-
-   Example Lambda function for **Creating a User**:
-
-   ```python
-   import json
-   import pymysql
-
-   # RDS settings
-   RDS_HOST = 'your-rds-endpoint'
-   USERNAME = 'your-username'
-   PASSWORD = 'your-password'
-   DATABASE = 'flask_app'
-
-   # Database connection
-   connection = pymysql.connect(host=RDS_HOST, user=USERNAME, password=PASSWORD, database=DATABASE)
-
-   def lambda_handler(event, context):
-       try:
-           name = event['name']
-           email = event['email']
-           
-           with connection.cursor() as cursor:
-               cursor.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (name, email))
-               connection.commit()
-               
-           return {
-               'statusCode': 200,
-               'body': json.dumps(f"User {name} created successfully!")
-           }
-       except Exception as e:
-           return {
-               'statusCode': 400,
-               'body': json.dumps(f"Error: {str(e)}")
-           }
+2. **Create and activate the virtual environment**:
+   ```bash
+   sudo apt-get install python3 python3-pip -y 
+   sudo apt-get install python3-pip -y 
+   sudo apt install python3.12-venv -y
+   python3 -m venv ~/venv
+   source ~/venv/bin/activate
    ```
 
-   Similarly, you can create Lambda functions for **Read**, **Update**, and **Delete** operations.
+3. **Install necessary Python libraries**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+#### 2. **Create the Flask App**:
+ - Refer: 
+   - https://github.com/atingupta2005/aws-rds-python-flask-crud
+#### 5. **Run the Flask Application**:
+
+1. **Activate the Virtual Environment** (if it's not activated):
+   ```bash
+   source ~/venv/bin/activate
+   ```
+
+2. **Run the Flask App**:
+   ```bash
+   cd ~/aws-rds-python-flask-crud
+   python app.py
+   ```
+
+3. Open your web browser and go to `http://127.0.0.1:5000` to see the CRUD application in action.
 
 ---
 
-#### **Step 3: Deploy Lambda Function**
-1. **Zip your Python code** (including dependencies like `pymysql`):
-   - Create a directory for your Lambda function and the required libraries.
-   - Install libraries locally:
-     ```bash
-     pip install pymysql -t ./lambda_package
-     ```
-   - Add your function code into the `lambda_package` directory and zip everything.
+### Summary of Features:
 
-     ```bash
-     zip -r function.zip .
-     ```
-
-2. **Upload ZIP file** to AWS Lambda.
-   - In the **Lambda** console, select your function, and under **Function code**, upload the ZIP file.
-
-3. **Test Lambda Function**:
-   - Create a test event for your Lambda function with a sample payload:
-     ```json
-     {
-       "name": "John Doe",
-       "email": "johndoe@example.com"
-     }
-     ```
-
-   - Save and test the function. If everything is correct, it should return a success message.
-
----
-
-#### **Step 4: Set Up API Gateway to Trigger Lambda**
-1. **Create a New API:**
-   - Go to **API Gateway** and create a new REST API.
-   - Create a new resource, e.g., `/users`, and then create HTTP methods (GET, POST, PUT, DELETE) to trigger the corresponding Lambda functions.
-
-2. **Integrate API with Lambda**:
-   - For each method (GET, POST, PUT, DELETE), set the integration type to **Lambda Function** and select the respective Lambda function.
-   - Enable **Lambda Proxy Integration** to pass the event directly from the API Gateway to the Lambda function.
-
-3. **Deploy API**:
-   - Create a new **stage** (e.g., `dev`) and deploy your API.
-   - Note the **Invoke URL** for testing.
-
----
-
-#### **Step 5: Test with Postman**
-1. **Test Create User**:
-   - Open Postman and send a POST request to your API Gateway endpoint (`POST /users`).
-   - Example body:
-     ```json
-     {
-       "name": "Alice",
-       "email": "alice@example.com"
-     }
-     ```
-
-2. **Test Get User**:
-   - Send a GET request (`GET /users/{id}`) to retrieve the user by ID.
-
-3. **Test Update User**:
-   - Send a PUT request (`PUT /users/{id}`) with updated data.
-
-4. **Test Delete User**:
-   - Send a DELETE request (`DELETE /users/{id}`) to delete the user.
-
----
-
-#### **Step 6: Monitor and Debug**
-- Use **CloudWatch Logs** to monitor the output of your Lambda functions and debug any issues.
-- You can add logging in the Lambda function like this:
-  
-  ```python
-  import logging
-  logger = logging.getLogger()
-  logger.setLevel(logging.INFO)
-  
-  logger.info("This is a log message.")
-  ```
+1. **Create** a new user via a form.
+2. **Read** the list of users from the MySQL database.
+3. **Update** a user's information via the edit page.
+4. **Delete** a user from the database.
 
 ---
