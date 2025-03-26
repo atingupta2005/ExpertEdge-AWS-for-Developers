@@ -44,7 +44,7 @@
 **Step 1: Update the Instance**
 - Once you’re logged into the instance, update the package lists:
   ```bash
-  sudo apt-get update -y # For Ubuntu
+  sudo apt-get update -y
   ```
 
 **Step 2: Install Python and Pip**
@@ -54,11 +54,11 @@
   ```
 - If Python is not installed, install it:
   ```bash
-  sudo apt-get install python3 python3-pip -y  # For Ubuntu
+  sudo apt-get install python3 python3-pip -y 
   ```
 - Install pip (Python's package installer) if needed:
   ```bash
-  sudo apt-get install python3-pip -y  # For Ubuntu
+  sudo apt-get install python3-pip -y 
   ```
 
 ---
@@ -93,7 +93,6 @@
   ```
   http://<Your_Public_IP>:5000/
   ```
-- You should see the "Hello, World!" message displayed.
 
 ---
 
